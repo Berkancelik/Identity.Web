@@ -47,7 +47,7 @@ namespace Identity.Web
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
 
-            }).AddPasswordValidator<CustomPasswordValidation>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            }).AddPasswordValidator<CustomPasswordValidation>().AddUserValidator<CustomUserValidator>().AddEntityFrameworkStores<AppIdentityDbContext>();
             services.AddControllersWithViews();
         }
 
