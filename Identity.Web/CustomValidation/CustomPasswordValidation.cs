@@ -12,11 +12,7 @@ namespace Identity.Web.CustomValidation
             List<IdentityError> errors = new List<IdentityError>();
             if (password.ToLower().Contains(user.UserName.ToLower())){
 
-                if (!user.Email.Contains(user.UserName))
-                {
-                    errors.Add(new IdentityError() { Code = "PasswordContainsUserName", Description = "şifre alanı kullanıcı adı içeremez" });
-
-                }
+                errors.Add(new IdentityError() { Code = "PasswordContainsUserName", Description = "şifre alanı kullanıcı adı içeremez" });
             }
 
             if (password.ToLower().Contains("1234")) 
