@@ -1,4 +1,5 @@
 ﻿using Identity.Web.Models;
+using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.Extensions.Logging;
 using System;
@@ -11,12 +12,8 @@ namespace Identity.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly ILogger<HomeController> _logger;
-
-        public HomeController(ILogger<HomeController> logger)
-        {
-            _logger = logger;
-        }
+        private readonly UserManager<AppUser> _userManager;
+    
 
         public IActionResult Index()
         {
