@@ -38,9 +38,6 @@ namespace Identity.Web
 
 
 
-
-
-
                 opts.Password.RequiredLength = 4;
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequireDigit = false;
