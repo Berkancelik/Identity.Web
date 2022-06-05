@@ -34,7 +34,6 @@ namespace Identity.Web.CustomValidation
             return new IdentityError()
             {
                 Code = "DuplicateUserName",
-                Description = $"Bu Kullanıcı Adı:({userName}) zaten kullanılmaktadır !"
             };
         }
     }
