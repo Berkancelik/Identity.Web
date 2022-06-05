@@ -152,5 +152,12 @@ namespace Identity.Web.Controllers
             }
             return View(passwordResetViewModel);
         }
+
+        public IActionResult ResetPasswordConfirm(string userId, string token)
+        {
+            TempData["user_id"] = userId;
+            TempData["token"] = token;
+            return View();
+        }
     }
 }
