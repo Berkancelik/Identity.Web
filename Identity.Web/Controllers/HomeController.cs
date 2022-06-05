@@ -13,11 +13,13 @@ namespace Identity.Web.Controllers
 {
     public class HomeController : Controller
     {
-        private readonly UserManager<AppUser> _userManager;
+        public readonly UserManager<AppUser> userManager;
+        public readonly SignInManager<AppUser> signInManager;
 
-        public HomeController(UserManager<AppUser> userManager)
+        public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
         {
-            _userManager = userManager;
+            this.userManager = userManager;
+            this.signInManager = signInManager;
         }
 
         public IActionResult Index()
@@ -40,6 +42,31 @@ namespace Identity.Web.Controllers
             return View();
         }
 
+        [HttpPost]
+        public async Task<IActionResult> LogIn(LoginViewModel login)
+        {
+            if (ModelState.IsValid)
+            {AppUser user = await userManager.FindByEmailAsync(login.Email);
+                if (user!=null)
+                {
+                    await signInManager.SignOutAsync();
+                    // ilk false kullanıcı cookie leri kaydedip, beni hatırla özelliği ile giirş yapma
+                    // ikinci false ise kullanıcı kilitlemek için kullanılmaktaıdr
+                    Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.PasswordSignInAsync(user,login.Password,false,false);
+
+                    if (result.Succeeded)
+                    {
+                        return RedirectToAction("Index", "Members");
+                    }
+                }
+                else
+                {
+                    ModelState.AddModelError("","Geçersiz email adı veya şifresi");
+                }
+            }
+            return View();
+        }
+
 
         [HttpGet]
         public IActionResult SignUp()
@@ -57,7 +84,7 @@ namespace Identity.Web.Controllers
                 user.Email = userViewModel.Email;
                 user.PhoneNumber = userViewModel.PhoneNumber;
 
-                IdentityResult result = await _userManager.CreateAsync(user, userViewModel.Password);
+                IdentityResult result = await userManager.CreateAsync(user, userViewModel.Password);
 
                 if (result.Succeeded)
                 {
