@@ -97,7 +97,6 @@ namespace Identity.Web.Controllers
             return View();
         }
 
-        [HttpPost]
         public async Task<IActionResult> SignUp(UserViewModel userViewModel)
         {
             if (ModelState.IsValid)
@@ -123,6 +122,22 @@ namespace Identity.Web.Controllers
             }
 
             return View(userViewModel);
+        }
+
+        public IActionResult ResetPassword()
+        {
+            return View();
+        }
+
+        [HttpPost]
+        public  IActionResult ResetPassword(PasswordResetViewModel passwordResetViewModel)
+        {
+            AppUser user = userManager.FindByEmailAsync(passwordResetViewModel.Email).Result;
+            if (user!=null)
+            {
+                string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
+            }
+            return View();
         }
     }
 }
