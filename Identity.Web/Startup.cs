@@ -31,6 +31,34 @@ namespace Identity.Web
             {
                 opts.UseSqlServer(configuration["ConnectionStrings:DefaultConnectionString"]);
             });
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
             services.AddIdentity<AppUser, IdentityRole>(opts =>
             {
                 opts.User.RequireUniqueEmail = true;
@@ -44,7 +72,7 @@ namespace Identity.Web
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
 
-            }).AddPasswordValidator<CustomPasswordValidation>().AddUserValidator<CustomUserValidator>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            }).AddPasswordValidator<CustomPasswordValidation>().AddUserValidator<CustomUserValidator>().AddErrorDescriber<CustomIdentityErrorDescriber>().AddEntityFrameworkStores<AppIdentityDbContext>();
             services.AddControllersWithViews();
         }
 
