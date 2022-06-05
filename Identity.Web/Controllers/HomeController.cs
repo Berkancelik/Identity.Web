@@ -130,10 +130,10 @@ namespace Identity.Web.Controllers
         }
 
         [HttpPost]
-        public  IActionResult ResetPassword(PasswordResetViewModel passwordResetViewModel)
+        public IActionResult ResetPassword(PasswordResetViewModel passwordResetViewModel)
         {
             AppUser user = userManager.FindByEmailAsync(passwordResetViewModel.Email).Result;
-            if (user!=null)
+            if (user != null)
             {
                 string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
                 string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home", new
@@ -141,7 +141,7 @@ namespace Identity.Web.Controllers
                     userId = user.Id,
                     token = passwordResetToken,
 
-                },HttpContext.Request.Scheme);
+                }, HttpContext.Request.Scheme);
 
                 Helper.PasswordReset.PasswordResetSendEmail(passwordResetLink);
                 ViewBag.status = "successfull";
@@ -157,6 +157,40 @@ namespace Identity.Web.Controllers
         {
             TempData["user_id"] = userId;
             TempData["token"] = token;
+            return View();
+        }
+
+
+        [HttpPost]
+        public async Task<IActionResult> ResetPasswordConfirm([Bind("PasswordNew")]PasswordResetViewModel passwordResetViewModel)
+        {
+            string token = TempData["token"].ToString();
+            string userId = TempData["userId"].ToString();
+
+            AppUser user = await userManager.FindByIdAsync(userId);
+
+            if (user != null)
+            {
+                IdentityResult result = await userManager.ResetPasswordAsync(user, token, passwordResetViewModel.PasswordNew);
+                if (result.Succeeded)
+                {
+                    await userManager.UpdateSecurityStampAsync(user);
+                    TempData["passwordResetInfo"] = "Şifreniz başarıli şekilde yenilenmiştir. Yeni şifreniz ile giriş yapabilirsiniz";
+                    ViewBag.status = "success";
+                }
+                else
+                {
+                    foreach (var item in result.Errors)
+                    {
+                        ModelState.AddModelError("", item.Description);
+                    }
+                }
+            }
+            else
+            {
+                ModelState.AddModelError("", "Hata meydana gelmiştir. Lütfen daha sonra tekrar deneyiniz");
+            }
+            
             return View();
         }
     }
