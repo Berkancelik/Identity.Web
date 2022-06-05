@@ -43,7 +43,7 @@ namespace Identity.Web
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
 
-            }).AddPasswordValidator<CustomPasswordValidation>().AddUserValidator<CustomUserValidator>().AddErrorDescriber<CustomIdentityErrorDescriber>().AddEntityFrameworkStores<AppIdentityDbContext>();
+            }).AddPasswordValidator<CustomPasswordValidation>().AddUserValidator<CustomUserValidator>().AddErrorDescriber<CustomIdentityErrorDescriber>().AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
 
             CookieBuilder cookieBuilder = new CookieBuilder();
             cookieBuilder.Name = "MyBlog";
