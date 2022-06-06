@@ -5,6 +5,11 @@ using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 using Mapster;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Mvc.Rendering;
+using System;
+using Identity.Web.Enums;
+using Microsoft.AspNetCore.Http;
+using System.IO;
 
 namespace Identity.Web.Controllers
 {
@@ -76,22 +81,49 @@ namespace Identity.Web.Controllers
 
         public IActionResult UserEdit()
         {
+
             AppUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             return View(userViewModel);
         }
-
         [HttpPost]
-        public async Task<IActionResult> UserEdit(UserViewModel userViewModel)
+        public async Task<IActionResult> UserEdit(UserViewModel userViewModel, IFormFile userPicture)
         {
             ModelState.Remove("Password");
+            ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
+
             if (ModelState.IsValid)
             {
                 AppUser user = await userManager.FindByNameAsync(User.Identity.Name);
+                if (userPicture != null && userPicture.Length > 0)
+                {
+                    var fileNmae = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
+
+                    var path = Path.Combine(Directory.GetCurrentDirectory(), "wwwroot/UserPicture", fileNmae);
+
+                    using (var stream = new FileStream(path, FileMode.Create))
+                    {
+                        await userPicture.CopyToAsync(stream);
+                        user.Picture = "/UserPicture/" + fileNmae;
+                    };
+                }
+
+
+
+
+
+
+
+
+
 
                 user.UserName = userViewModel.UserName;
                 user.Email = userViewModel.Email;
                 user.PhoneNumber = userViewModel.PhoneNumber;
+                user.City = userViewModel.City;
+                user.BirthDay = userViewModel.BirthDay;
+                user.Gender = (int)userViewModel.Gender;
 
                 IdentityResult result = await userManager.UpdateAsync(user);
 
@@ -113,8 +145,8 @@ namespace Identity.Web.Controllers
 
             return View(userViewModel);
         }
-        
-        public void  LogOut()
+
+        public void LogOut()
         {
             signInManager.SignOutAsync();
         }
