@@ -81,8 +81,6 @@ namespace Identity.Web.Controllers
             return View(userViewModel);
         }
 
-
-
         [HttpPost]
         public async Task<IActionResult> UserEdit(UserViewModel userViewModel)
         {
@@ -114,6 +112,11 @@ namespace Identity.Web.Controllers
             }
 
             return View(userViewModel);
+        }
+        
+        public void  LogOut()
+        {
+            signInManager.SignOutAsync();
         }
     }
 }
