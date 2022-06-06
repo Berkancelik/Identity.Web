@@ -16,36 +16,30 @@ namespace Identity.Web.Controllers
 
 
     [Authorize]
-    public class MemberController : Controller
+    public class MemberController : BaseController
     {
-        public UserManager<AppUser> userManager { get; }
-        public SignInManager<AppUser> signInManager { get; }
 
-        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager)
+        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager, signInManager)
         {
-            this.userManager = userManager;
-            this.signInManager = signInManager;
-        }
 
+        }
         public IActionResult Index()
         {
-            AppUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+            AppUser user = CurrentUser;
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
 
             return View(userViewModel);
         }
-
         public IActionResult PasswordChange()
         {
             return View();
         }
-
         [HttpPost]
         public IActionResult PasswordChange(PasswordChangeViewModel passwordChangeViewModel)
         {
             if (ModelState.IsValid)
             {
-                AppUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+                AppUser user = CurrentUser;
 
                 bool exist = userManager.CheckPasswordAsync(user, passwordChangeViewModel.PasswordOld).Result;
 
@@ -64,10 +58,7 @@ namespace Identity.Web.Controllers
                     }
                     else
                     {
-                        foreach (var item in result.Errors)
-                        {
-                            ModelState.AddModelError("", item.Description);
-                        }
+                        AddModelError(result);
                     }
                 }
                 else
@@ -82,7 +73,7 @@ namespace Identity.Web.Controllers
         public IActionResult UserEdit()
         {
 
-            AppUser user = userManager.FindByNameAsync(User.Identity.Name).Result;
+            AppUser user = CurrentUser;
             UserViewModel userViewModel = user.Adapt<UserViewModel>();
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             return View(userViewModel);
@@ -95,7 +86,7 @@ namespace Identity.Web.Controllers
 
             if (ModelState.IsValid)
             {
-                AppUser user = await userManager.FindByNameAsync(User.Identity.Name);
+                AppUser user = CurrentUser;
                 if (userPicture != null && userPicture.Length > 0)
                 {
                     var fileNmae = Guid.NewGuid().ToString() + Path.GetExtension(userPicture.FileName);
@@ -109,22 +100,12 @@ namespace Identity.Web.Controllers
                     };
                 }
 
-
-
-
-
-
-
-
-
-
                 user.UserName = userViewModel.UserName;
                 user.Email = userViewModel.Email;
                 user.PhoneNumber = userViewModel.PhoneNumber;
                 user.City = userViewModel.City;
                 user.BirthDay = userViewModel.BirthDay;
                 user.Gender = (int)userViewModel.Gender;
-
                 IdentityResult result = await userManager.UpdateAsync(user);
 
                 if (result.Succeeded)
@@ -136,10 +117,7 @@ namespace Identity.Web.Controllers
                 }
                 else
                 {
-                    foreach (var item in result.Errors)
-                    {
-                        ModelState.AddModelError(" ", item.Description);
-                    }
+                    AddModelError(result);
                 }
             }
 

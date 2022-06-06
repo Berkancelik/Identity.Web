@@ -13,7 +13,6 @@ namespace Identity.Web.Controllers
         {
             _userManager = userManager;
         }
-
         public IActionResult Index()
         {
             return View(_userManager.Users.ToList());
