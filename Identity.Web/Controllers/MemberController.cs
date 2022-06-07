@@ -128,5 +128,9 @@ namespace Identity.Web.Controllers
         {
             signInManager.SignOutAsync();
         }
+        public IActionResult AccesDenied()
+        {
+            return View();
+        }
     }
 }
