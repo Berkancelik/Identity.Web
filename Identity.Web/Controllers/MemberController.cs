@@ -15,7 +15,7 @@ namespace Identity.Web.Controllers
 {
 
 
-    [Authorize]
+    [Authorize(Roles = "Admin")]
     public class MemberController : BaseController
     {
 
@@ -132,5 +132,18 @@ namespace Identity.Web.Controllers
         {
             return View();
         }
+
+        [Authorize(Roles = "editor,Admin")]
+        public IActionResult Editor()
+        {
+            return View();
+        }
+
+        [Authorize(Roles = "manager,Admin")]
+        public IActionResult Manager()
+        {
+            return View();
+        }
+
     }
 }

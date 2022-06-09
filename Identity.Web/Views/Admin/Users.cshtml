@@ -21,8 +21,7 @@
             <td colspan="3">Hiç bir üye yoktur.</td>
         </tr>
     }
-    else
-    {
+    
 
         @foreach (var item in Model)
         {
@@ -31,9 +30,9 @@
                 <td>@item.UserName</td>
                 <td>@item.Email</td>
                 <td user-roles="@item.Id"></td>
-                <td> <a class="btn btn-success" asp-action="RoleAssign" asp-route-id="@item.Id">Role ata</a></td>
+                <td> <a class="btn btn-success"  asp-action="RoleAssign" asp-route-id="@item.Id" >Role ata</a></td>
             </tr>
         }
 
-    }
+    
 </table>

@@ -8,7 +8,8 @@ using System.Linq;
 using System.Threading.Tasks;
 
 namespace Identity.Web.CustomTagHelper
-{   [HtmlTargetElement("td", Attributes = "user-roles")]
+{
+    [HtmlTargetElement("td", Attributes = "user-roles")]
     public class UserRolesName : TagHelper
     {
         public UserManager<AppUser> UserManager { get; set; }
