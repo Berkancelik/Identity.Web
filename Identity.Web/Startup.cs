@@ -42,6 +42,11 @@ namespace Identity.Web
                 {
                     policy.RequireClaim("city", "ankara");
                 });
+
+                opts.AddPolicy("ViolencePolicy", policy =>
+                {
+                    policy.RequireClaim("violence");
+                });
             });
             services.AddIdentity<AppUser, AppRole>(opts =>
             {
