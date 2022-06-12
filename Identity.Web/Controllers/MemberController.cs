@@ -128,7 +128,7 @@ namespace Identity.Web.Controllers
         {
             signInManager.SignOutAsync();
         }
-        public IActionResult AccesDenied()
+        public IActionResult AccessDenied()
         {
             return View();
         }
@@ -145,5 +145,12 @@ namespace Identity.Web.Controllers
             return View();
         }
 
+        [Authorize(Policy = "AnkaraPolicy")]
+        public IActionResult AnkaraPage()
+        {
+            return View();
+        }
     }
 }
+
+    

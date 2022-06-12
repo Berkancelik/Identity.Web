@@ -1,5 +1,6 @@
 using Identity.Web.CustomValidation;
 using Identity.Web.Models;
+using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -28,11 +29,20 @@ namespace Identity.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
+          
+
+
             services.AddDbContext<AppIdentityDbContext>(opts =>
             {
                 opts.UseSqlServer(configuration["ConnectionStrings:DefaultConnectionString"]);
             });
-
+            services.AddAuthorization(opts =>
+            {
+                opts.AddPolicy("AnkaraPolicy", policy =>
+                {
+                    policy.RequireClaim("city", "ankara");
+                });
+            });
             services.AddIdentity<AppUser, AppRole>(opts =>
             {
                 opts.User.RequireUniqueEmail = true;
@@ -43,7 +53,12 @@ namespace Identity.Web
                 opts.Password.RequireLowercase = false;
                 opts.Password.RequireUppercase = false;
 
-            }).AddPasswordValidator<CustomPasswordValidation>().AddUserValidator<CustomUserValidator>().AddErrorDescriber<CustomIdentityErrorDescriber>().AddEntityFrameworkStores<AppIdentityDbContext>().AddDefaultTokenProviders();
+            })
+                .AddPasswordValidator<CustomPasswordValidation>()
+                .AddUserValidator<CustomUserValidator>()
+                .AddErrorDescriber<CustomIdentityErrorDescriber>()
+                .AddEntityFrameworkStores<AppIdentityDbContext>()
+                .AddDefaultTokenProviders();
 
             CookieBuilder cookieBuilder = new CookieBuilder();
             cookieBuilder.Name = "MyBlog";
@@ -56,9 +71,10 @@ namespace Identity.Web
                 opts.LogoutPath = new PathString("/Member/LogOut");
                 opts.Cookie = cookieBuilder;
                 opts.SlidingExpiration = true;
-                opts.ExpireTimeSpan = TimeSpan.FromDays(60);
-                opts.AccessDeniedPath = new PathString("/Member/AccessDenied/");
+                opts.ExpireTimeSpan = System.TimeSpan.FromDays(60);
+                opts.AccessDeniedPath = new PathString("/Member/AccessDenied");
             });
+            services.AddScoped<IClaimsTransformation, ClaimProvider.ClaimProvider>();
             services.AddMvc();
         }
 
