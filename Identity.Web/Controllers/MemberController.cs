@@ -10,6 +10,7 @@ using System;
 using Identity.Web.Enums;
 using Microsoft.AspNetCore.Http;
 using System.IO;
+using System.Security.Claims;
 
 namespace Identity.Web.Controllers
 {
@@ -165,6 +166,25 @@ namespace Identity.Web.Controllers
         }
         [Authorize(Policy = "ViolencePolicy")]
         public IActionResult ViolencePage()
+        {
+            return View();
+        }
+        public async Task<IActionResult> ExchangeRedirect()
+        {
+            bool result = User.HasClaim(x => x.Type == "ExpireDateExchange");
+            if (!result)
+            {
+                Claim ExpireDateExchange = new Claim("ExpireDateExchange", DateTime.Now.AddDays(30).Date.ToShortDateString(), ClaimValueTypes.String, "Internal");
+                await userManager.AddClaimAsync(CurrentUser, ExpireDateExchange);
+                await signInManager.SignOutAsync();
+                await signInManager.SignInAsync(CurrentUser, true);
+            }
+            return RedirectToAction("Exchange");
+
+        }
+        [Authorize(Policy = "ExchangePolicy")]
+
+        public IActionResult Exchange()
         {
             return View();
         }

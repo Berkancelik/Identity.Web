@@ -1,6 +1,7 @@
 using Identity.Web.CustomValidation;
 using Identity.Web.Models;
 using Microsoft.AspNetCore.Authentication;
+using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Http;
@@ -31,7 +32,7 @@ namespace Identity.Web
         {
           
 
-
+            services.AddTransient<IAuthorizationHandler, ExpireDateExchangeHandler>();
             services.AddDbContext<AppIdentityDbContext>(opts =>
             {
                 opts.UseSqlServer(configuration["ConnectionStrings:DefaultConnectionString"]);
@@ -46,6 +47,10 @@ namespace Identity.Web
                 opts.AddPolicy("ViolencePolicy", policy =>
                 {
                     policy.RequireClaim("violence");
+                });
+                opts.AddPolicy("ExchangePolicy", policy =>
+                {
+                    policy.AddRequirements(new ExpireDateExchangeRequirement());
                 });
             });
             services.AddIdentity<AppUser, AppRole>(opts =>
