@@ -53,10 +53,21 @@ namespace Identity.Web
                     policy.AddRequirements(new ExpireDateExchangeRequirement());
                 });
             });
+
+            services.AddAuthentication().AddFacebook(opts =>
+            {
+                opts.AppId = configuration["Authentication:Facebook:AppId"];
+                opts.AppSecret = configuration["Authentication:Facebook:AppSecret"];
+
+            });
+
+
+
+
             services.AddIdentity<AppUser, AppRole>(opts =>
             {
                 opts.User.RequireUniqueEmail = true;
-                opts.User.AllowedUserNameCharacters = "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789-._@+";
+                opts.User.AllowedUserNameCharacters = "abcçdefgðhijklmnopqrstuvwxyzABCÇDEFGHIÝJKLMNOPQRSTUVWXYZ0123456789-._@+";
                 opts.Password.RequiredLength = 4;
                 opts.Password.RequireNonAlphanumeric = false;
                 opts.Password.RequireDigit = false;
