@@ -13,10 +13,10 @@ namespace Identity.Web.Controllers
 {
     public class HomeController : BaseController
     {
-      
+
         public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager, signInManager)
         {
-            
+
         }
         public IActionResult Index()
         {
@@ -44,6 +44,11 @@ namespace Identity.Web.Controllers
                     if (await userManager.IsLockedOutAsync(user))
                     {
                         ModelState.AddModelError("", "Hesabınız bir süreliğine kilitlenmiştir. Lütfen daha sonra tekrar deneyiniz.");
+                        return View(userlogin);
+                    }
+                    if (userManager.IsEmailConfirmedAsync(user).Result == false)
+                    {
+                        ModelState.AddModelError("", "Email adresiniz onaylanmamıştır. Lütfen e-posta adresinizi kontrol ediniz.");
                         return View(userlogin);
                     }
 
@@ -104,6 +109,17 @@ namespace Identity.Web.Controllers
 
                 if (result.Succeeded)
                 {
+                    string confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+                    string link = Url.Action("ConfirmEmail", "Home", new
+                    {
+                        userId = user.Id,
+                        token = confirmationToken
+                    }, protocol: HttpContext.Request.Scheme);
+                    Helper.EmailConfirmation.SendEmail(link, user.Email);
+
+
+
+
                     return RedirectToAction("LogIn");
                 }
                 else
@@ -137,7 +153,7 @@ namespace Identity.Web.Controllers
 
                 //  www.bıdıbıdı.com/Home/ResetPasswordConfirm?userId=sdjfsjf&token=dfjkdjfdjf
 
-                Helper.PasswordReset.PasswordResetSendEmail(passwordResetLink,user.Email);
+                Helper.PasswordReset.PasswordResetSendEmail(passwordResetLink, user.Email);
 
                 ViewBag.status = "success";
             }
@@ -182,6 +198,23 @@ namespace Identity.Web.Controllers
             }
 
             return View(passwordResetViewModel);
+        }
+
+        [HttpPost]
+        public async Task<IActionResult> ConfirmEmail(string userId, string token)
+        {
+            var user = await userManager.FindByIdAsync(userId);
+
+            IdentityResult result = await userManager.ConfirmEmailAsync(user, token);
+            if (result.Succeeded)
+            {
+                ViewBag.status = "Email adresiniz onaylanmıştır. Login ekranından giriş yapabilirsiniz.";
+            }
+            else
+            {
+                ViewBag.status = "Bir hata meydana geldi. Lütfen daha sonra tekrar deneyiniz";
+            }
+            return View();
         }
     }
 }
