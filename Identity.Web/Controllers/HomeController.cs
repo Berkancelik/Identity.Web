@@ -14,22 +14,24 @@ namespace Identity.Web.Controllers
 {
     public class HomeController : BaseController
     {
-
         public HomeController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager, signInManager)
         {
-
         }
+
         public IActionResult Index()
         {
             if (User.Identity.IsAuthenticated)
             {
                 return RedirectToAction("Index", "Member");
             }
+
             return View();
         }
+
         public IActionResult LogIn(string ReturnUrl)
         {
             TempData["ReturnUrl"] = ReturnUrl;
+
             return View();
         }
 
@@ -45,11 +47,13 @@ namespace Identity.Web.Controllers
                     if (await userManager.IsLockedOutAsync(user))
                     {
                         ModelState.AddModelError("", "Hesabınız bir süreliğine kilitlenmiştir. Lütfen daha sonra tekrar deneyiniz.");
+
                         return View(userlogin);
                     }
+
                     if (userManager.IsEmailConfirmedAsync(user).Result == false)
                     {
-                        ModelState.AddModelError("", "Email adresiniz onaylanmamıştır. Lütfen e-posta adresinizi kontrol ediniz.");
+                        ModelState.AddModelError("", "Email adresiniz onaylanmamıştır. Lütfen  epostanızı kontrol ediniz.");
                         return View(userlogin);
                     }
 
@@ -60,20 +64,24 @@ namespace Identity.Web.Controllers
                     if (result.Succeeded)
                     {
                         await userManager.ResetAccessFailedCountAsync(user);
+
                         if (TempData["ReturnUrl"] != null)
                         {
                             return Redirect(TempData["ReturnUrl"].ToString());
                         }
+
                         return RedirectToAction("Index", "Member");
                     }
                     else
                     {
                         await userManager.AccessFailedAsync(user);
+
                         int fail = await userManager.GetAccessFailedCountAsync(user);
                         ModelState.AddModelError("", $" {fail} kez başarısız giriş.");
                         if (fail == 3)
                         {
                             await userManager.SetLockoutEndDateAsync(user, new System.DateTimeOffset(DateTime.Now.AddMinutes(20)));
+
                             ModelState.AddModelError("", "Hesabınız 3 başarısız girişten dolayı 20 dakika süreyle kitlenmiştir. Lütfen daha sonra tekrar deneyiniz.");
                         }
                         else
@@ -111,15 +119,16 @@ namespace Identity.Web.Controllers
                 if (result.Succeeded)
                 {
                     string confirmationToken = await userManager.GenerateEmailConfirmationTokenAsync(user);
+
                     string link = Url.Action("ConfirmEmail", "Home", new
                     {
                         userId = user.Id,
                         token = confirmationToken
-                    }, protocol: HttpContext.Request.Scheme);
+                    }, protocol: HttpContext.Request.Scheme
+
+                    );
+
                     Helper.EmailConfirmation.SendEmail(link, user.Email);
-
-
-
 
                     return RedirectToAction("LogIn");
                 }
@@ -146,6 +155,7 @@ namespace Identity.Web.Controllers
 
             {
                 string passwordResetToken = userManager.GeneratePasswordResetTokenAsync(user).Result;
+
                 string passwordResetLink = Url.Action("ResetPasswordConfirm", "Home", new
                 {
                     userId = user.Id,
@@ -170,6 +180,7 @@ namespace Identity.Web.Controllers
         {
             TempData["userId"] = userId;
             TempData["token"] = token;
+
             return View();
         }
 
@@ -178,19 +189,22 @@ namespace Identity.Web.Controllers
         {
             string token = TempData["token"].ToString();
             string userId = TempData["userId"].ToString();
+
             AppUser user = await userManager.FindByIdAsync(userId);
+
             if (user != null)
             {
                 IdentityResult result = await userManager.ResetPasswordAsync(user, token, passwordResetViewModel.PasswordNew);
+
                 if (result.Succeeded)
                 {
                     await userManager.UpdateSecurityStampAsync(user);
+
                     ViewBag.status = "success";
                 }
                 else
                 {
                     AddModelError(result);
-
                 }
             }
             else
@@ -201,69 +215,81 @@ namespace Identity.Web.Controllers
             return View(passwordResetViewModel);
         }
 
-        [HttpPost]
         public async Task<IActionResult> ConfirmEmail(string userId, string token)
         {
             var user = await userManager.FindByIdAsync(userId);
 
             IdentityResult result = await userManager.ConfirmEmailAsync(user, token);
+
             if (result.Succeeded)
             {
                 ViewBag.status = "Email adresiniz onaylanmıştır. Login ekranından giriş yapabilirsiniz.";
             }
             else
             {
-                ViewBag.status = "Bir hata meydana geldi. Lütfen daha sonra tekrar deneyiniz";
+                ViewBag.status = "Bir hata meydana geldi. lütfen daha sonra tekrar deneyiniz.";
             }
             return View();
         }
 
         public IActionResult FacebookLogin(string ReturnUrl)
+
         {
             string RedirectUrl = Url.Action("ExternalResponse", "Home", new { ReturnUrl = ReturnUrl });
+
             var properties = signInManager.ConfigureExternalAuthenticationProperties("Facebook", RedirectUrl);
+
             return new ChallengeResult("Facebook", properties);
         }
 
-        public async Task<IActionResult> ExternalResponse(string ReurnUrl = "/")
+        public async Task<IActionResult> ExternalResponse(string ReturnUrl = "/")
         {
             ExternalLoginInfo info = await signInManager.GetExternalLoginInfoAsync();
             if (info == null)
             {
-                return RedirectToAction("Login");
+                return RedirectToAction("LogIn");
             }
             else
             {
-                Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider,
-                   info.ProviderKey, true);
+                Microsoft.AspNetCore.Identity.SignInResult result = await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
+
                 if (result.Succeeded)
                 {
-                    return Redirect(ReurnUrl);
+                    return Redirect(ReturnUrl);
                 }
                 else
                 {
                     AppUser user = new AppUser();
+
+                    user.Email = info.Principal.FindFirst(ClaimTypes.Email).Value;
                     string ExternalUserId = info.Principal.FindFirst(ClaimTypes.NameIdentifier).Value;
+
                     if (info.Principal.HasClaim(x => x.Type == ClaimTypes.Name))
                     {
                         string userName = info.Principal.FindFirst(ClaimTypes.Name).Value;
+
                         userName = userName.Replace(' ', '-').ToLower() + ExternalUserId.Substring(0, 5).ToString();
+
                         user.UserName = userName;
                     }
                     else
                     {
                         user.UserName = info.Principal.FindFirst(ClaimTypes.Email).Value;
                     }
-                    IdentityResult createResult = await userManager.CreateAsync(user);
 
+                    IdentityResult createResult = await userManager.CreateAsync(user);
 
                     if (createResult.Succeeded)
                     {
                         IdentityResult loginResult = await userManager.AddLoginAsync(user, info);
+
                         if (loginResult.Succeeded)
                         {
-                            await signInManager.SignInAsync(user, isPersistent: true);
-                            return Redirect(ReurnUrl);
+                            //     await signInManager.SignInAsync(user, true);
+
+                            await signInManager.ExternalLoginSignInAsync(info.LoginProvider, info.ProviderKey, true);
+
+                            return Redirect(ReturnUrl);
                         }
                         else
                         {
@@ -274,24 +300,18 @@ namespace Identity.Web.Controllers
                     {
                         AddModelError(createResult);
                     }
-
-
-
-
-
-
-
-
-
-
-
-
-
-
                 }
             }
 
-            return RedirectToAction("Error");
+            List<string> errors = ModelState.Values.SelectMany(x => x.Errors).Select(y => y.ErrorMessage).ToList();
+
+            return View("Error", errors);
+        }
+
+        public ActionResult Error()
+        {
+            return View();
         }
     }
 }
+© 2022 GitHub, I
