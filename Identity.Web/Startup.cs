@@ -59,6 +59,10 @@ namespace Identity.Web
                 opts.AppId = configuration["Authentication:Facebook:AppId"];
                 opts.AppSecret = configuration["Authentication:Facebook:AppSecret"];
 
+            }).AddGoogle(opts =>
+            {
+                opts.ClientId = configuration["Authentication:Google:ClientID"];
+                opts.ClientId = configuration["Authentication:Google:ClientSecret"];
             });
 
 
