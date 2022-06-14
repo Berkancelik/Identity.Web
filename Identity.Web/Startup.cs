@@ -53,16 +53,18 @@ namespace Identity.Web
                     policy.AddRequirements(new ExpireDateExchangeRequirement());
                 });
             });
-
             services.AddAuthentication().AddFacebook(opts =>
             {
                 opts.AppId = configuration["Authentication:Facebook:AppId"];
                 opts.AppSecret = configuration["Authentication:Facebook:AppSecret"];
-
             }).AddGoogle(opts =>
             {
                 opts.ClientId = configuration["Authentication:Google:ClientID"];
-                opts.ClientId = configuration["Authentication:Google:ClientSecret"];
+                opts.ClientSecret = configuration["Authentication:Google:ClientSecret"];
+            }).AddMicrosoftAccount(opts =>
+            {
+                opts.ClientId = configuration["Authentication:Microsoft:ClientId"];
+                opts.ClientSecret = configuration["Authentication:Microsoft:ClientSecret"];
             });
 
 
