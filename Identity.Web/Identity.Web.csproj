@@ -6,6 +6,7 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="DocumentFormat.OpenXml" Version="2.16.0" />
     <PackageReference Include="Mapster" Version="7.3.0" />
     <PackageReference Include="Microsoft.AspNet.Identity.Core" Version="2.2.3" />
     <PackageReference Include="Microsoft.AspNetCore.Authentication.Facebook" Version="5.0.17" />

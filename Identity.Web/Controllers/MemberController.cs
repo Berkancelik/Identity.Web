@@ -53,9 +53,9 @@ namespace Identity.Web.Controllers
 
                 AppUser user = CurrentUser;
                 string phone = userManager.GetPhoneNumberAsync(user).Result;
-                if (phone!=userViewModel.PhoneNumber)
+                if (phone != userViewModel.PhoneNumber)
                 {
-                    if (userManager.Users.Any(u=>u.PhoneNumber==userViewModel.PhoneNumber))
+                    if (userManager.Users.Any(u => u.PhoneNumber == userViewModel.PhoneNumber))
                     {
                         ModelState.AddModelError("", "Bu  telefon numaruası başka bir üye ");
                         return View(userViewModel);
@@ -218,5 +218,7 @@ namespace Identity.Web.Controllers
         {
             return View();
         }
+
+        
     }
 }
