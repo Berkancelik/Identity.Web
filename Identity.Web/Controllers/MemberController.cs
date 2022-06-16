@@ -11,6 +11,7 @@ using Identity.Web.Enums;
 using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Security.Claims;
+using System.Linq;
 
 namespace Identity.Web.Controllers
 {
@@ -49,7 +50,18 @@ namespace Identity.Web.Controllers
             ViewBag.Gender = new SelectList(Enum.GetNames(typeof(Gender)));
             if (ModelState.IsValid)
             {
+
                 AppUser user = CurrentUser;
+                string phone = userManager.GetPhoneNumberAsync(user).Result;
+                if (phone!=userViewModel.PhoneNumber)
+                {
+                    if (userManager.Users.Any(u=>u.PhoneNumber==userViewModel.PhoneNumber))
+                    {
+                        ModelState.AddModelError("", "Bu  telefon numaruası başka bir üye ");
+                        return View(userViewModel);
+                    }
+                }
+
 
                 if (userPicture != null && userPicture.Length > 0)
                 {
