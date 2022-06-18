@@ -8,12 +8,12 @@ namespace Identity.Web.ViewModels
     {
 
         [Required(ErrorMessage = "Kullanıcı ismi gereklidir")]
-        [Display(Name ="Kullanıcı Adı")]
+        [Display(Name = "Kullanıcı Adı")]
         public string UserName { get; set; }
 
 
         [Display(Name = "Tel No")]
-        [RegularExpression(@"^(0(\d{3}) (\d{3}) (\d{2}) (\d{2}))$", ErrorMessage ="Telefon Numarası uygun forrtmatta değil")]
+        [RegularExpression(@"^(0(\d{3}) (\d{3}) (\d{2}) (\d{2}))$", ErrorMessage = "Telefon Numarası uygun forrtmatta değil")]
         public string PhoneNumber { get; set; }
 
         [Required(ErrorMessage = "Email Adresi gereklidir")]
@@ -23,7 +23,7 @@ namespace Identity.Web.ViewModels
 
         [Required(ErrorMessage = "Şifreniz gereklidir")]
         [Display(Name = "Şifre")]
-        [DataType(DataType.Password)] 
+        [DataType(DataType.Password)]
         public string Password { get; set; }
         [DataType(DataType.Date)]
 

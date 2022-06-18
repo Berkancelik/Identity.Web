@@ -16,12 +16,10 @@ namespace Identity.Web.Controllers
         public AdminController(UserManager<AppUser> userManager, RoleManager<AppRole> roleManager) : base(userManager, null, roleManager)
         {
         }
-
         public IActionResult Index()
         {
             return View();
         }
-
         public IActionResult Claims()
         {
             return View(User.Claims.ToList());
@@ -30,7 +28,6 @@ namespace Identity.Web.Controllers
         {
             return View();
         }
-
         [HttpPost]
         public IActionResult RoleCreate(RoleViewModel roleViewModel)
         {
@@ -50,17 +47,14 @@ namespace Identity.Web.Controllers
 
             return View(roleViewModel);
         }
-
         public IActionResult Roles()
         {
             return View(roleManager.Roles.ToList());
         }
-
         public IActionResult Users()
         {
             return View(userManager.Users.ToList());
         }
-
         public IActionResult RoleDelete(string id)
         {
             AppRole role = roleManager.FindByIdAsync(id).Result;
@@ -71,7 +65,6 @@ namespace Identity.Web.Controllers
 
             return RedirectToAction("Roles");
         }
-
         public IActionResult RoleUpdate(string id)
         {
             AppRole role = roleManager.FindByIdAsync(id).Result;
@@ -83,7 +76,6 @@ namespace Identity.Web.Controllers
 
             return RedirectToAction("Roles");
         }
-
         [HttpPost]
         public IActionResult RoleUpdate(RoleViewModel roleViewModel)
         {
@@ -110,7 +102,6 @@ namespace Identity.Web.Controllers
 
             return View(roleViewModel);
         }
-
         public IActionResult RoleAssign(string id)
         {
             TempData["userId"] = id;
@@ -142,7 +133,6 @@ namespace Identity.Web.Controllers
 
             return View(roleAssignViewModels);
         }
-
         [HttpPost]
         public async Task<IActionResult> RoleAssign(List<RoleAssignViewModel> roleAssignViewModels)
         {
@@ -170,7 +160,6 @@ namespace Identity.Web.Controllers
             passwordResetByAdminViewModel.UserId = user.Id;
             return View(passwordResetByAdminViewModel);
         }
-
         [HttpPost]
         public async Task<IActionResult> ResetUserPassword(PasswordResetByAdminViewModel passwordResetByAdminViewModel)
         {

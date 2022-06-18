@@ -5,7 +5,7 @@ namespace Identity.Web.ViewModels
     public class LoginViewModel
     {
 
-        [Display(Name="Email adresiniz")]
+        [Display(Name = "Email adresiniz")]
         [Required(ErrorMessage = "Email alanı gereklidir.")]
         [EmailAddress]
         public string Email { get; set; }
@@ -13,7 +13,7 @@ namespace Identity.Web.ViewModels
         [Display(Name = "Şifreniz")]
         [Required(ErrorMessage = "Şifre alanı gereklidir.")]
         [DataType(DataType.Password)]
-        [MinLength(4,ErrorMessage = "Şifreniz en az 4 karakterli olmalıdır.")]
+        [MinLength(4, ErrorMessage = "Şifreniz en az 4 karakterli olmalıdır.")]
         public string Password { get; set; }
 
 
