@@ -1,17 +1,17 @@
-﻿using Identity.Web.Models;
+﻿using Identity.Web.Enums;
+using Identity.Web.Models;
 using Identity.Web.ViewModels;
+using Mapster;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Http;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using Mapster;
-using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using System;
-using Identity.Web.Enums;
-using Microsoft.AspNetCore.Http;
 using System.IO;
-using System.Security.Claims;
 using System.Linq;
+using System.Security.Claims;
+using System.Threading.Tasks;
 
 namespace Identity.Web.Controllers
 {
