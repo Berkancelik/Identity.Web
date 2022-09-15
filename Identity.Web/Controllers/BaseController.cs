@@ -2,6 +2,7 @@
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
 
+//azure feature 
 namespace Identity.Web.Controllers
 {
     public class BaseController : Controller
