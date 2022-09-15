@@ -1,7 +1,6 @@
 ﻿using Identity.Web.Models;
 using Microsoft.AspNetCore.Identity;
 using Microsoft.AspNetCore.Mvc;
-using System.Threading.Tasks;
 
 namespace Identity.Web.Controllers
 {
