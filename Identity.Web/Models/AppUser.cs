@@ -9,5 +9,6 @@ namespace Identity.Web.Models
         public string Picture { get; set; }
         public DateTime? BirthDay { get; set; }
         public int Gender { get; set; }
+        public SByte? TwoFactor { get; set; }
     }
 }
