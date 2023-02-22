@@ -219,6 +219,11 @@ namespace Identity.Web.Controllers
             return View();
         }
 
+        public IActionResult TwoFactorAuth()
+        {
+            return View();
+        }
+
         
     }
 }
