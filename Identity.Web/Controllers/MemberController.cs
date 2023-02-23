@@ -224,6 +224,21 @@ namespace Identity.Web.Controllers
             return View(new AuthenticatorViewModel() { TwoFactorType = (TwoFactor)CurrentUser.TwoFactor });
         }
 
+        [HttpPost]
+        public async Task<IActionResult> TwoFactorAuth(AuthenticatorViewModel authenticatorViewModel)
+        {
+
+            switch (authenticatorViewModel.TwoFactorType)
+            {
+                case TwoFactor.None:
+                    CurrentUser.TwoFactorEnabled = false;
+                    CurrentUser.TwoFactor = (sbyte)TwoFactor.None;
+                    TempData["message"] = "İki adımlı kimlik doğrulama tipiniz jiçbiri olarak belirlenmiştir";
+                    break;             
+            }
+            await userManager.UpdateAsync(CurrentUser);
+            return View(authenticatorViewModel);
+        }
 
     }
 }

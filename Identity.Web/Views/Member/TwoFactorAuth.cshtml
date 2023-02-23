@@ -31,5 +31,16 @@
                 @ViewBag.warning
             </div>
         </div>
-
     }
+
+
+    @if (TempData["message"]!=null)
+    {
+        <div class="col-md-12">
+
+            <div class="alert alert-info">
+               @TempData["message"]
+            </div>
+        </div>
+    }
+
