@@ -1,5 +1,6 @@
 using Identity.Web.CustomValidation;
 using Identity.Web.Models;
+using Identity.Web.Service;
 using Microsoft.AspNetCore.Authentication;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -30,8 +31,8 @@ namespace Identity.Web
 
         public void ConfigureServices(IServiceCollection services)
         {
-          
-            services.AddScoped<TwoFactorService.TwoFactorService>
+
+            services.AddScoped<TwoFactorService>();
             services.AddTransient<IAuthorizationHandler, ExpireDateExchangeHandler>();
             services.AddDbContext<AppIdentityDbContext>(opts =>
             {

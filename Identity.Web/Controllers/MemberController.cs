@@ -12,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 using System.IO;
 using System.Security.Claims;
 using System.Linq;
+using Identity.Web.Service;
 
 namespace Identity.Web.Controllers
 {
@@ -20,9 +21,13 @@ namespace Identity.Web.Controllers
     [Authorize]
     public class MemberController : BaseController
     {
-        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager) : base(userManager, signInManager)
+        public MemberController(UserManager<AppUser> userManager, SignInManager<AppUser> signInManager, TwoFactorService twoFactorService) : base(userManager, signInManager)
         {
+            _twoFactorService = twoFactorService;
         }
+
+
+        private readonly TwoFactorService _twoFactorService;    
 
         public IActionResult Index()
         {
@@ -217,6 +222,20 @@ namespace Identity.Web.Controllers
         public IActionResult Exchange()
         {
             return View();
+        }
+
+        public async Task<IActionResult> TwoFactorWithAuthenticator()
+        {
+            string unformattedKey = await userManager.GetAuthenticatorKeyAsync(CurrentUser);
+            if (string.IsNullOrEmpty(unformattedKey))
+            {
+                await userManager.ResetAuthenticatorKeyAsync(CurrentUser);
+                unformattedKey = await userManager.GetAuthenticatorKeyAsync(CurrentUser);
+            }
+            AuthenticatorViewModel authenticatorViewModel = new AuthenticatorViewModel();
+            authenticatorViewModel.SharedKey = unformattedKey;
+            authenticatorViewModel.AuthenticationUri = _twoFactorService.GenerateQrCodeUri(CurrentUser.Email, unformattedKey);
+            return View(authenticatorViewModel);
         }
 
         public IActionResult TwoFactorAuth()
