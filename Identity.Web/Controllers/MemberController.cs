@@ -27,7 +27,7 @@ namespace Identity.Web.Controllers
         }
 
 
-        private readonly TwoFactorService _twoFactorService;    
+        private readonly TwoFactorService _twoFactorService;
 
         public IActionResult Index()
         {
@@ -253,7 +253,9 @@ namespace Identity.Web.Controllers
                     CurrentUser.TwoFactorEnabled = false;
                     CurrentUser.TwoFactor = (sbyte)TwoFactor.None;
                     TempData["message"] = "İki adımlı kimlik doğrulama tipiniz jiçbiri olarak belirlenmiştir";
-                    break;             
+                    break;
+                case TwoFactor.MicrosoftGoogle:
+                    return RedirectToAction("TwoFactorWithAuthenticator");
             }
             await userManager.UpdateAsync(CurrentUser);
             return View(authenticatorViewModel);
