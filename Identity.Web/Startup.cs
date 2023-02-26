@@ -31,7 +31,7 @@ namespace Identity.Web
         public void ConfigureServices(IServiceCollection services)
         {
           
-
+            services.AddScoped<TwoFactorService.TwoFactorService>
             services.AddTransient<IAuthorizationHandler, ExpireDateExchangeHandler>();
             services.AddDbContext<AppIdentityDbContext>(opts =>
             {
